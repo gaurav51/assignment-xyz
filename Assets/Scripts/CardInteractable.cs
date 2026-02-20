@@ -7,11 +7,13 @@ public class CardInteractable : MonoBehaviour
     public CardType cardType;
     public bool canBeFlipped = true;
 
-    public Vector3 childPos = new Vector3(0.1f, 0, 0.1f);
+    public Vector3 childPos = new Vector3(0, 0, -0.01f);
+    public Vector3 childScale = new Vector3(0.7f, 1, 1);
 
     void Start()
     {
         transform.GetChild(0).localPosition = childPos;
+        transform.GetChild(2).localScale = childScale;
     }
 
     void OnEnable()

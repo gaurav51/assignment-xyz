@@ -9,6 +9,10 @@ public class GameSaveData
     public int columns;
     public int score;
     public int combo;
+    public int moves;
+    public int lives;
+    public int turnNumber;
+    public int matchNumber;
     public List<int> gridCardTypes;
     public List<bool> gridCardMatched;
 }
@@ -43,7 +47,7 @@ public class CardgameManager : MonoBehaviour
     public int moves = 0;
     public int lives = 3;
     public int level = 1;
-    public int matchNumber = 1;
+    public int matchNumber = 0;
     public int turnNumber = 1;
 
     private List<CardInteractable> currentlyFlipped = new List<CardInteractable>();
@@ -76,10 +80,18 @@ public class CardgameManager : MonoBehaviour
         {
             string json = PlayerPrefs.GetString("CardGameSaveData");
             GameSaveData data = JsonUtility.FromJson<GameSaveData>(json);
-            if (data != null && data.gridCardTypes.Count == rows * columns)
+            if (data != null && data.gridCardTypes.Count == data.rows * data.columns)
             {
                 score = data.score;
                 combo = data.combo;
+                moves = data.moves;
+                lives = data.lives;
+                turnNumber = data.turnNumber;
+                matchNumber = data.matchNumber;
+                
+                // If lives ever somehow dropped to <=0 in save, restore to 3
+                if (lives <= 0) lives = 3; 
+
                 RestoreGrid(data);
                 return;
             }
@@ -95,6 +107,10 @@ public class CardgameManager : MonoBehaviour
             columns = columns,
             score = score,
             combo = combo,
+            moves = moves,
+            lives = lives,
+            turnNumber = turnNumber,
+            matchNumber = matchNumber,
             gridCardTypes = new List<int>(),
             gridCardMatched = new List<bool>()
         };
@@ -121,6 +137,10 @@ public class CardgameManager : MonoBehaviour
         combo = 0;
         moves = 0;
         turnNumber = 1;
+        matchNumber = 0;
+        
+        UpdateGridSizeForLevel(level);
+
         UpdateAllUIEvents();
         GenerateGrid(rows, columns);
     }
@@ -260,6 +280,7 @@ public class CardgameManager : MonoBehaviour
         }
 
         matchedPairsCount /= 2;
+        matchNumber = matchedPairsCount;
         currentlyFlipped.Clear();
         UpdateAllUIEvents();
         AdjustCameraSize(data.rows, data.columns);
@@ -303,10 +324,13 @@ public class CardgameManager : MonoBehaviour
         {
             combo++;
             score += 10 * combo;
+            matchNumber++;
             GameEvents.OnScoreUpdate?.Invoke(score);
+            GameEvents.OnMatchNumberUpdated?.Invoke(matchNumber);
 
             if (combo > 1)
             {
+                GameEvents.OnComboUpdate?.Invoke(combo);
                 PlaySound(comboSound);
             }
             else
@@ -343,36 +367,67 @@ public class CardgameManager : MonoBehaviour
         {
             ClearSave();
             Debug.Log($"Level {level} Complete! Score: {score}, Final Combo: {combo}");
-            DOVirtual.DelayedCall(1.5f, NextLevel);
+             UpdateDataForNextLevel(); 
+            DOVirtual.DelayedCall(1.5f, () =>{ 
+               
+                GameEvents.OnGameWin?.Invoke();
+                });
         }
     }
 
-    private void NextLevel()
+    public void UpdateDataForNextLevel()
     {
         level++;
         PlayerPrefs.SetInt("PlayerLevel", level);
         PlayerPrefs.Save();
         
-        Random.InitState(System.DateTime.Now.Millisecond + level * 1000);
-
-        int newRows = Random.Range(2, 7);
-        int newCols = Random.Range(2, 7);
-        
-        if ((newRows * newCols) % 2 != 0)
-        {
-            newCols++;
-            if (newCols > 6) newCols -= 2;
-        }
-
-        rows = newRows;
-        columns = newCols;
+        UpdateGridSizeForLevel(level);
 
         moves = 0;
         turnNumber = 1;
         combo = 0;
+        matchNumber = 0;
 
         UpdateAllUIEvents();
+    }
+
+    public void NextLevel()
+    {
         GenerateGrid(rows, columns);
+    }
+
+    private void UpdateGridSizeForLevel(int currentLevel)
+    {
+        // Define grid sizes (Rows, Columns). Must result in an even total number of cards.
+        int[,] gridSizes = new int[,] 
+        {
+            {2, 2}, // Lvl 1: 4 cards
+            {2, 2}, // Lvl 2: 4 cards
+            {3, 2}, // Lvl 3: 6 cards
+            {3, 2}, // Lvl 4: 6 cards
+            {4, 2}, // Lvl 5: 8 cards
+            {4, 2}, // Lvl 6: 8 cards
+            {5, 2}, // Lvl 7: 10 cards
+            {5, 2}, // Lvl 8: 10 cards
+            {4, 3}, // Lvl 9: 12 cards
+            {4, 3}, // Lvl 10: 12 cards
+            {7, 2}, // Lvl 11: 14 cards
+            {7, 2}, // Lvl 12: 14 cards
+            {4, 4}, // Lvl 13: 16 cards
+            {4, 4}, // Lvl 14: 16 cards
+            {6, 3}, // Lvl 15: 18 cards
+            {6, 3}, // Lvl 16: 18 cards
+            {5, 4}, // Lvl 17: 20 cards
+            {5, 4}, // Lvl 18: 20 cards
+            {6, 4}, // Lvl 19: 24 cards
+            {6, 4}, // Lvl 20: 24 cards
+            {6, 5}, // Lvl 21: 30 cards
+            {6, 6}  // Lvl 22+: 36 cards
+        };
+
+        int index = Mathf.Clamp(currentLevel - 1, 0, gridSizes.GetLength(0) - 1);
+        rows = gridSizes[index, 0];
+        columns = gridSizes[index, 1];
     }
 
     public void PlaySound(AudioClip clip)

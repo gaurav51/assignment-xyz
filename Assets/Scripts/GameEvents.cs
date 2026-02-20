@@ -22,5 +22,6 @@ public static class GameEvents {
     public static Action<int> OnLevelUpdate;
     public static Action<int> OnMovesUpdate;
     public static Action<int> OnLivesUpdate;
+    public static Action<int> OnComboUpdate;
     
 }
