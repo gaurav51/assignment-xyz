@@ -180,7 +180,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: -0.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -305,9 +305,78 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1029246534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1029246535}
+  - component: {fileID: 1029246536}
+  m_Layer: 0
+  m_Name: Gamemanager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1029246535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029246534}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1029246536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029246534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cceefeefb3c9e24eab456cd490c867a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefabs:
+  - {fileID: 9152360981182447299, guid: 11d9aeb3d6abefe43b41e62c8e777c3f, type: 3}
+  - {fileID: 3826679256041554646, guid: 8d57414c21b716847b675d9809d6cd4f, type: 3}
+  - {fileID: 2674001501836962334, guid: ba8209a38303dc6458bd88706406a9b0, type: 3}
+  - {fileID: 7893850086713302650, guid: 32e2509059402b04bb73745a12bf98e2, type: 3}
+  - {fileID: 2815371438951791491, guid: 72443df30019ae6448b4da12a3461b0e, type: 3}
+  - {fileID: 6153183851821149458, guid: c7aab7d7c42acdb4cacada8e43236e94, type: 3}
+  - {fileID: 713155321247049333, guid: 2c45082cc5ad9d64a9aa26dbbef9702e, type: 3}
+  - {fileID: 2848676999552521011, guid: fdc1fed381d7892489a1691c87d44009, type: 3}
+  - {fileID: 1947712097660996496, guid: 29c5c1031be57f54291c567011ccaea7, type: 3}
+  - {fileID: 9032779148498217702, guid: 97dca0ff8258b844b8e3560c8bc27b51, type: 3}
+  cards: []
+  rows: 6
+  columns: 3
+  spacing: 1.1
+  mainCamera: {fileID: 330585545}
+  cameraPadding: 1
+  audioSource: {fileID: 0}
+  flipSound: {fileID: 0}
+  matchSound: {fileID: 0}
+  mismatchSound: {fileID: 0}
+  gameOverSound: {fileID: 0}
+  score: 0
+  combo: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 330585546}
   - {fileID: 832575519}
+  - {fileID: 1029246535}
